@@ -1,0 +1,9 @@
+*.gz
+*.tar
+*.parquet
+*.csv
+*.bam
+*.fastq
+*.1
+*.zip
+*.sra

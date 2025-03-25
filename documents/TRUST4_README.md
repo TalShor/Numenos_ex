@@ -174,7 +174,16 @@ If you are interested in a subset of chains, you can "grep" those from trust_cdr
 You can use the "annotator" from TRUST4 to annotate the V,D,J,C genes and CDRs for any given sequences, just like using IgBLAST or IMGT/VQuest. To obtain the annotation in AIRR format for human sequences with eight threads, you can use the command
 
 	./annotator -f human_IMGT+C.fa -a input.fa --fasta -t 8 --needReveserComplement --noImpute --outputFormat 1 > annotation.tsv 
- 
+
+## File Reading Functions
+
+The following functions are implemented in the Python module [read_files.py](/Users/talshor/Projects/Numenos_ex/code/read_files.py):
+
+- read_cdr3_out_file(path: Path): Reads the CDR3 output TSV file.
+- read_annot_fa_file(path: Path): Reads an annotation FASTA file.
+- read_report_tsv_file(path: Path): Reads a report TSV file.
+- read_airr_tsv_file(path: Path): Reads an AIRR formatted TSV file.
+
 ### Example
 
 The directory './example' in this distribution contains one BAM files as input for TRUST4. Run TRUST4 with:
