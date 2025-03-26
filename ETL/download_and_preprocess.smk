@@ -4,8 +4,9 @@ SAMPLES = ["SRR5088815", "SRR5088816"]
 
 rule all:
     input:
-        expand("data/{sample}/{sample}_cdr3.out", sample=SAMPLES)
-
+        expand("data/{sample}/{sample}_cdr3.out", sample=SAMPLES),
+        expand("data/{sample}/{sample}_fastqc_raw.html", sample=SAMPLES),
+        
 rule prefetch:
     output:
         sra="data/{sample}/{sample}.sra"
@@ -29,6 +30,42 @@ rule fastq_dump:
             fastq-dump --split-files {wildcards.sample} --outdir /data/{wildcards.sample}
         """
 
+rule fastqc_raw:
+    input:
+        read1="data/{sample}/{sample}_1.fastq",
+        read2="data/{sample}/{sample}_2.fastq"
+    output:
+        report="data/{sample}/{sample}_fastqc_raw.html",
+        zip="data/{sample}/{sample}_fastqc_raw.zip"
+    threads: 2
+    shell:
+        """
+        docker run --rm -v /Users/talshor/Projects/Numenos_ex/data:/data fastqc_docker \
+            fastqc -o /data/{wildcards.sample} --threads {threads} \
+            data/{wildcards.sample}/{wildcards.sample}_1.fastq \
+            data/{wildcards.sample}/{wildcards.sample}_2.fastq
+        """
+
+# TODO: the quality is really good - check if we actually need this
+# rule fastp:
+#     input:
+#         read1="data/{sample}/{sample}_1.fastq",
+#         read2="data/{sample}/{sample}_2.fastq"
+#     output:
+#         read1="data/{sample}/{sample}_1.trimmed.fastq",
+#         read2="data/{sample}/{sample}_2.trimmed.fastq",
+#     threads: 2
+#     shell:
+#         """
+#         docker run --rm -v /Users/talshor/Projects/Numenos_ex/data:/data fastp_docker \
+#             fastp -i data/{wildcards.sample}/{wildcards.sample}_1.fastq \
+#             -I data/{wildcards.sample}/{wildcards.sample}_2.fastq \
+#             -o data/{wildcards.sample}/{wildcards.sample}_1.trimmed.fastq \
+#             -O data/{wildcards.sample}/{wildcards.sample}_2.trimmed.fastq \
+#             --detect_adapter_for_pe --cut_right --cut_right_window_size 4 --cut_right_mean_quality 20 \
+#             --cut_tail --cut_tail_window_size 4 --cut_tail_mean_quality 20 --length_required 50
+#         """
+
 rule trust4:
     input:
         read1="data/{sample}/{sample}_1.fastq",
@@ -44,10 +81,11 @@ rule trust4:
         assembled="data/{sample}/{sample}_assembled_reads.fa",
         raw="data/{sample}/{sample}_raw.out",
         final="data/{sample}/{sample}_final.out"
-    threads: 4
+    threads: 2
     shell:
         """
         docker run --rm -v /Users/talshor/Projects/Numenos_ex/data/{wildcards.sample}:/data trust4_docker \
             run-trust4 -f /reference/hg38_bcrtcr.fa --ref /reference/human_IMGT+C.fa \
-            -1 data/{wildcards.sample}_1.fastq -2 data/{wildcards.sample}_2.fastq -o /data/{wildcards.sample}
+            -1 data/{wildcards.sample}_1.fastq -2 data/{wildcards.sample}_2.fastq -o /data/{wildcards.sample} \
+            -t {threads}
         """

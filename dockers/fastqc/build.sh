@@ -1,1 +1,1 @@
-docker build -t fastqc .
+docker build -t fastqc_docker .
