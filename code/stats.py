@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.spatial.distance import braycurtis
 from read_files import read_trust_report_file_with_header
+from typing import List, Dict
 
 def report_braycurtis(rep1:pd.DataFrame, rep2:pd.DataFrame) -> float:
     """
@@ -47,3 +48,41 @@ def run_all_reports_bc(reports:dict) -> pd.DataFrame:
 
     return all_bc
     
+
+def get_file_stats(srr_prefix: str) -> List[int]:
+    """
+    Get the number of lines in the file with the given prefix.
+
+    Parameters:
+        srr_prefix (str): The prefix of the file name.
+
+    Returns:
+        List[int]: A list containing the number of lines in the file.
+    """
+
+    def _get_file_length(file_path: str) -> pd.Series:
+        """
+        Get the number of lines in a file.
+
+        Parameters:
+            file_path (str): The path to the file.
+
+        Returns:
+            int: The number of lines in the file.
+        """
+        with open(file_path, "r") as f:
+            return sum(1 for _ in f)
+    
+    results = {}
+    results['antibody_raw_count'] = _get_file_length(srr_prefix + "_raw.out") / 6
+    results['antibody_final_count'] = _get_file_length(srr_prefix + "_final.out") / 6
+    results['total_read_count'] = _get_file_length(srr_prefix + "_1.fastq") / 4
+    return pd.Series(results)
+
+
+def get_file_stats_from_list(report_paths: dict, antibody_reads:pd.DataFrame) -> pd.DataFrame:
+    results = {
+        name:get_file_stats(path.replace('_report.tsv', '')) \
+            for name, path in report_paths.items()
+    }
+    return pd.DataFrame(results).T.join(antibody_reads)

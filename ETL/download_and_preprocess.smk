@@ -1,11 +1,11 @@
 # Note: To avoid the ILP CBC error, run Snakemake with the greedy scheduler:
 #       snakemake --scheduler greedy -j <jobs>
-SAMPLES = ["SRR5088815", "SRR5088816"]
+SAMPLES = ["SRR5088829", "SRR5088830", "SRR5088831", "SRR5088832"]
 
 rule all:
     input:
         expand("data/{sample}/{sample}_cdr3.out", sample=SAMPLES),
-        expand("data/{sample}/{sample}_fastqc_raw.html", sample=SAMPLES),
+        #Wexpand("data/{sample}/{sample}_fastqc_raw.html", sample=SAMPLES),
         
 rule prefetch:
     output:

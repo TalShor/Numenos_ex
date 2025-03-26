@@ -33,33 +33,6 @@ def read_cdr3_out_file(path:Path) -> pd.DataFrame:
                'complete_vdj_assembly'], header=None)
 
 
-
-def read_trust_report_file(path:Path) -> pd.DataFrame:
-    """
-    Read the trust report file from the specified path.
-    The file is expected to be a tab-separated values (TSV) file with the following columns:
-    - read_count
-    - frequency
-    - CDR3_dna
-    - CDR3_amino_acids
-    - V
-    - D
-    - J
-    - C
-    - consensus_id
-    - consensus_id_complete_vdj
-
-    Parameters:
-        path (Path): The path to the trust report file.
-    Returns:
-        pd.DataFrame: A DataFrame containing the trust report data.
-    """
-
-    return pd.read_csv(path, sep='\t', 
-        names=['read_count', 'frequency', 'CDR3_dna', 'CDR3_amino_acids', 
-               'V', 'D', 'J', 'C', 'consensus_id', 'consensus_id_complete_vdj'], header=None)
-
-
 def read_trust_report_file_with_header(path:Path) -> pd.DataFrame:
     """
     Read the trust report file from the specified path.
