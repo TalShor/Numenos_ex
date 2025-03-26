@@ -8,3 +8,6 @@
 *.zip
 *.sra
 data/
+.snakemake
+.DS_Store
+*.pyc

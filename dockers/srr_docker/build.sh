@@ -1,0 +1,1 @@
+docker build -t srr_docker .
