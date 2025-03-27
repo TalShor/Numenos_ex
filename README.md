@@ -30,7 +30,7 @@ The paper investigates the genomic and microenvironmental changes in melanoma tu
 
 Contains 
 * 68 pairs of RNA-Seq (before treatment with Nivolumab and after) for PBMCs (50M reads post QC)
-* Cyto Score (GSE91061_BMS038109Sample_Cytolytic_Score_20161026.txt) based on RAN expression levels
+* Cyto Score (GSE91061_BMS038109Sample_Cytolytic_Score_20161026.txt) based on RNA expression levels
 
 ## Preprocessing
 
@@ -109,7 +109,7 @@ Spearman and Pearson correlations did not provide meaningful results due to a ze
 3. Hard to show significance
 * The gene frequencies are zero tailed (the mapping is sparse)
 * It's log-normal at nature (probably due to some cascading effect) when not missing alltogether.
-* *The numbers are very small
+* The numbers are very small
 We can't use a lot of tests (e.g. even though chi-square works for small numbers - it needs a normal distribution)
 **Solution:** Use Wilcoxon test. Doesn't assume normal distribution and can operate with a small number of samples.
 That being said - the results were lackluster with 7 samples (Pre and On) and if we would have corrected for multiple testing - we would have been left with nothing.
