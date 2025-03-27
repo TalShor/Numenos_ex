@@ -1,5 +1,3 @@
-# Note: To avoid the ILP CBC error, run Snakemake with the greedy scheduler:
-#       snakemake --scheduler greedy -j <jobs>
 SAMPLES = ["SRR5088829", "SRR5088830", "SRR5088831", "SRR5088832"]
 
 rule all:
@@ -46,7 +44,7 @@ rule fastqc_raw:
             data/{wildcards.sample}/{wildcards.sample}_2.fastq
         """
 
-# TODO: the quality is really good - check if we actually need this
+# The quality is really good - no need for this
 # rule fastp:
 #     input:
 #         read1="data/{sample}/{sample}_1.fastq",

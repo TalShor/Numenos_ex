@@ -18,7 +18,6 @@ The cytolytic score is a direct measure of immune cell killing activity in tumor
 This score is calculated from the expression of cytolytic genes (GZMA and PRF1)
 Higher scores = "hot" tumors with active immune infiltration
 Lower scores = "cold" tumors with limited immune activity
-This file is perfect for selecting samples based on immune status. Here's how to use it:
 
 translate_GSM_to_pt.csv 
 translate between GSM name, pt name for the experiment and the SRR name 
