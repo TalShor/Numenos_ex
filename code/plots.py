@@ -45,9 +45,8 @@ def antibody_cytoscore_plot(df: pd.DataFrame) -> None:
     plt.legend()
     plt.title("Antibodies Reads vs Cyto Score\nCorrelation: {:.2f} of log(#reads) to Cyto Score".format(corr))
     plt.tight_layout()
-    plt.savefig("scatter_plot.png")
     plt.show()
-    plt.figure(figsize=(8,6))
+    
 
 
 def bc_heatmap(report_paths:dict) -> None:
