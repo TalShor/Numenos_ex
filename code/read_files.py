@@ -79,12 +79,28 @@ def get_cyto_score() -> pd.DataFrame:
 
 
 def get_cyto_score_extended(cyto_score:pd.DataFrame) -> pd.DataFrame:
+    """
+    Extend the cytolytic score DataFrame by splitting the 'pt_sample_name' index into 'pt' and 'status' columns.
+    
+    Parameters:
+        cyto_score (pd.DataFrame): A DataFrame containing the cytolytic scores.
+    Returns:
+        pd.DataFrame: A DataFrame containing the extended cytolytic scores.
+    """
     info = cyto_score.index.get_level_values('pt_sample_name').str.split('_')
     cyto_score['pt'] = info.str[0]
     cyto_score['status'] = info.str[1]
     return cyto_score
 
 def get_paried_cyto_score(cyto_score:pd.DataFrame) -> pd.DataFrame:
+    """
+    Get the paired cytolytic scores for each sample.
+
+    Parameters:
+        cyto_score (pd.DataFrame): A DataFrame containing the cytolytic scores.
+    Returns:
+        pd.DataFrame: A DataFrame containing the paired cytolytic scores.
+    """
     cyto_score = get_cyto_score_extended(cyto_score)
     cyto_score_pv = cyto_score.pivot_table(
         index=['pt'], columns=['status'], values='cyto_score')
