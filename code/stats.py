@@ -86,3 +86,53 @@ def get_file_stats_from_list(report_paths: dict, antibody_reads:pd.DataFrame) ->
             for name, path in report_paths.items()
     }
     return pd.DataFrame(results).T.join(antibody_reads)
+
+
+def get_vdjc_aggregated(reports_dfs: dict) -> pd.DataFrame:
+    """
+    Aggergate the V(D)J(C) genes from the trust report files.
+
+    Parameters:
+        report_paths (dict): A dictionary containing the paths to the trust report files.
+        The keys are the sample names, and the values are the file paths.
+    Returns:
+        pd.DataFrame: A DataFrame containing the V(D)J(C) genes for each sample.
+    """
+    return pd.concat(reports_dfs.values).set_index(['sample', 'frequency'])\
+        [['V', 'D', 'J', 'C']].melt(ignore_index=False).reset_index()\
+        .groupby(['sample', 'variable', 'value'])['frequency'].sum().sort_values()\
+        .reset_index().pivot_table(
+            index=['sample'], 
+            columns=['variable', 'value'], 
+            values='frequency', fill_value=0)
+
+def get_vj_genes_freq(reports_dfs: dict) -> pd.DataFrame:
+    """
+    Aggregate the V and J genes from the trust report files.
+    Parameters:
+        reports_dfs (dict): A dictionary containing the DataFrames of the trust report files.
+        The keys are the sample names, and the values are the DataFrames.
+    Returns:
+        pd.DataFrame: A DataFrame containing the frequency of V and J genes for each sample.
+    """
+
+    return pd.concat(reports_dfs.values)\
+        .assign(V_gene = lambda x: x['V'].str.split('*').str[0])\
+        .assign(J_gene = lambda x: x['J'].str.split('*').str[0])\
+        .groupby(['sample', 'V_gene', 'J_gene'])[['frequency']].sum()\
+        .sort_values(by='frequency', ascending=False)
+
+def get_vj_genes_pairs_dist(VJ_genes: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate the distribution of V and J gene pairs.
+    Parameters:
+        VJ_genes (pd.DataFrame): A DataFrame containing the frequency of V and J genes for each sample.
+    Returns:    
+        pd.DataFrame: A DataFrame containing the distribution of V and J gene pairs.
+    """
+    return VJ_genes.reset_index().query('V_gene != "." and J_gene != "."')\
+        .pivot_table(
+            index='sample', 
+            columns=['V_gene', 'J_gene'], 
+            values='frequency', 
+            fill_value=0)
