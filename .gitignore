@@ -7,3 +7,7 @@
 *.1
 *.zip
 *.sra
+data/
+.snakemake
+.DS_Store
+*.pyc

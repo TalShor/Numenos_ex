@@ -40,7 +40,7 @@ GAAGAGGATGTTAACATGACTTTGCTTGGATCTGGAACTCCGGTTTCTATTCTGTGTGCTATGAGGTGGGGAAAGCAGGG
   - Gene annotations (V, D, J, C regions)
   - CDR1, CDR2, and CDR3 information with coordinates and sequences
 
-### 3. CDR3 Details
+### 3. CDR3 Details 
 
 **File:** `TRUST_example_cdr3.out`
 
