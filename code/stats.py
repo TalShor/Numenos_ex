@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
 from scipy.spatial.distance import braycurtis
-from read_files import read_trust_report_file_with_header
+from read_files import read_trust_report_file_with_header, get_cyto_score, get_cyto_score_extended
 from typing import List, Dict
+from scipy.stats import wilcoxon
+
 
 def report_braycurtis(rep1:pd.DataFrame, rep2:pd.DataFrame) -> float:
     """
@@ -136,3 +138,33 @@ def get_vj_genes_pairs_dist(VJ_genes: pd.DataFrame) -> pd.DataFrame:
             columns=['V_gene', 'J_gene'], 
             values='frequency', 
             fill_value=0)
+
+def compare_genes_thought_test(genes:pd.DataFrame, gene_col_name:str) -> pd.DataFrame:
+    """
+    Compare the frequencies of genes in the 'On' and 'Pre' conditions using the Wilcoxon test.
+    Parameters:
+        genes (pd.DataFrame): A DataFrame containing the frequencies of genes.
+        gene_col_name (str): The name of the column containing the gene names.
+    Returns:
+        pd.DataFrame: A DataFrame containing the p-values of the Wilcoxon test for each gene.    
+    """
+
+    def run_wilcoxon(df):
+        df = df.T
+        try:
+            on_df = df.loc[:, (slice(None), "On")]
+            pre_df = df.loc[:, (slice(None), "Pre")]
+            return wilcoxon(on_df, pre_df)
+        except:
+            return None
+
+    cyto_score = get_cyto_score_extended(get_cyto_score())
+    genes_time_compare = genes.join(cyto_score.reset_index(level=1)[['pt', 'status']])\
+        .pivot_table(index='pt', columns=[gene_col_name, 'status'], values='frequency', aggfunc='sum').fillna(0)
+        
+    genes_time_compare_pvalue = genes_time_compare.T.groupby(gene_col_name)\
+        .apply(run_wilcoxon).dropna()
+    
+    genes_time_compare_pvalue = genes_time_compare_pvalue.to_frame('statistic')\
+        .assign(pvalue=lambda df: df.statistic.apply(lambda x: x.pvalue[0])).sort_values(by='pvalue').drop(columns='statistic')
+    return genes_time_compare_pvalue

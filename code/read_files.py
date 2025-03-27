@@ -78,10 +78,14 @@ def get_cyto_score() -> pd.DataFrame:
         .drop(columns=['gsm_sample_name'])
 
 
-def get_paried_cyto_score(cyto_score:pd.DataFrame) -> pd.DataFrame:
+def get_cyto_score_extended(cyto_score:pd.DataFrame) -> pd.DataFrame:
     info = cyto_score.index.get_level_values('pt_sample_name').str.split('_')
     cyto_score['pt'] = info.str[0]
     cyto_score['status'] = info.str[1]
+    return cyto_score
+
+def get_paried_cyto_score(cyto_score:pd.DataFrame) -> pd.DataFrame:
+    cyto_score = get_cyto_score_extended(cyto_score)
     cyto_score_pv = cyto_score.pivot_table(
         index=['pt'], columns=['status'], values='cyto_score')
     

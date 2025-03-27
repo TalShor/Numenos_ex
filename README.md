@@ -71,6 +71,7 @@ Showing top visible genes for each of the families
 
 1. Some interactions are common between most samples
 2. Huge flactuation in percentages between samples for the same genes
+3. The V / J pair IGKV1-39 / IGKJ3 might have some significance for differentiating between Pre-medication and On-medication
 
 ### Requirements
 numpy, pandas, scipy, matplotlib, seaborn, 
@@ -104,6 +105,14 @@ I had experience with the protein side of immunoassays but not with antibodies t
 2. Sample Similarity  
 Spearman and Pearson correlations did not provide meaningful results due to a zero-inflated distribution when comparing two samples. Jaccard removed much of the information by being binary.  
 **Solution:** I ended up using Bray-Curtis distance. Since the range was very small (with similar samples around ~0.97 BC distance and the maximum at 1.0), I normalized the distances to enhance visibility in the graph.
+
+3. Hard to show significance
+* The gene frequencies are zero tailed (the mapping is sparse)
+* It's log-normal at nature (probably due to some cascading effect) when not missing alltogether.
+* *The numbers are very small
+We can't use a lot of tests (e.g. even though chi-square works for small numbers - it needs a normal distribution)
+**Solution:** Use Wilcoxon test. Doesn't assume normal distribution and can operate with a small number of samples.
+That being said - the results were lackluster with 7 samples (Pre and On) and if we would have corrected for multiple testing - we would have been left with nothing.
 
 
 ## Reliability of the output discussion
